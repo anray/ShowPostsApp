@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    android:background="@android:color/holo_blue_light"
+    android:orientation="vertical"
+    tools:context=".activity.MainActivity"
+    >
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3">
+
+        <ImageView
+            android:id="@+id/main_picture_iv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="top"
+            android:src="@drawable/main_picture"
+            />
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="top|right"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/colorAccent"
+            android:src="@drawable/content_save"
+            />
+
+    </FrameLayout>
+
+<!--ViewPager-->
+    <!--<android.support.v4.view.ViewPager-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="0dp"-->
+    <!--android:layout_weight="2"-->
+    <!--&gt;-->
+
+    <GridView
+        android:id="@+id/grid_gv"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:numColumns="3"
+        android:stretchMode="columnWidth"
+        />
+
+
+    <!--</android.support.v4.view.ViewPager>-->
+
+
+
+    <me.relex.circleindicator.CircleIndicator
+        android:id="@+id/indicator"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"/>
+
+
+</LinearLayout>
