@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Created by anray on 08.08.2016.
  */
-public class PostsAdapter extends ArrayAdapter<Posts> {
+public class GridAdapter extends ArrayAdapter<Posts> {
 
     //private Posts[] mPosts;
     private static final String[] mContacts = { "Рыжик", "Барсик", "Мурзик",
@@ -25,7 +25,7 @@ public class PostsAdapter extends ArrayAdapter<Posts> {
     private Context mContext;
     private List<Posts> mPosts;
 
-    public PostsAdapter(Context context, List<Posts> posts) {
+    public GridAdapter(Context context, List<Posts> posts) {
         super(context, android.R.layout.simple_list_item_2, posts);
         mContext = context;
         mPosts = posts;
@@ -34,7 +34,7 @@ public class PostsAdapter extends ArrayAdapter<Posts> {
 
     @Override
     public int getCount() {
-        return 6;
+        return mPosts.size();
     }
 
     @Override
@@ -65,19 +65,5 @@ public class PostsAdapter extends ArrayAdapter<Posts> {
     }
 
 
-//    @Override
-//    public View getView(int position, View convertView, ViewGroup parent) {
-//        //return super.getView(position, convertView, parent);
-//
-//        TextView label = (TextView) convertView;
-//
-//        if (convertView == null) {
-//            convertView = new TextView(mContext);
-//            label = (TextView) convertView;
-//        }
-//        label.setText(mContacts[position]);
-//        return (convertView);
-//
-//    }
 
 }
