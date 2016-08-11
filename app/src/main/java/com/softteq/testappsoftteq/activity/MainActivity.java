@@ -16,9 +16,12 @@ import android.widget.GridView;
 import android.widget.Toast;
 
 import com.softteq.testappsoftteq.R;
+import com.softteq.testappsoftteq.SoftteqApplication;
 import com.softteq.testappsoftteq.adapter.GridAdapter;
+import com.softteq.testappsoftteq.data.storage.models.UserDTO;
 import com.softteq.testappsoftteq.fragment.PageFragment;
 import com.softteq.testappsoftteq.network.response.Posts;
+import com.softteq.testappsoftteq.network.response.Users;
 import com.softteq.testappsoftteq.network.restmodels.RestService;
 import com.softteq.testappsoftteq.network.restmodels.ServiceGenerator;
 
@@ -46,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements PageFragment.Grid
     private PagerAdapter mPagerAdapter;
     private CircleIndicator mCircleIndicator;
     private Button mButton;
+    private RestService mRestService;
 
     private static final String TAG = "MainActivity";
 
@@ -58,46 +62,19 @@ public class MainActivity extends AppCompatActivity implements PageFragment.Grid
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        getSupportActionBar().hide();
+
         mCircleIndicator = (CircleIndicator) findViewById(R.id.indicator);
         mButton = (Button) findViewById(R.id.save_log_btn);
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (isExternalStorageWritable()) {
-
-                    File appDirectory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString());
-                    File logDirectory = new File(appDirectory + "/SOFTTEQ_LOG");
-
-                    String fileTitle = "logcat" + System.currentTimeMillis() + ".txt";
-                    File logFile = new File(logDirectory, fileTitle);
-
-
-                    // create app folder
-                    if (!appDirectory.exists()) {
-                        appDirectory.mkdir();
-                    }
-
-                    // create log folder
-                    if (!logDirectory.exists()) {
-                        logDirectory.mkdir();
-                    }
-
-                    // clear the previous logcat and then write the new one to the file
-                    try {
-                        Process process = Runtime.getRuntime().exec("logcat -c");
-                        process = Runtime.getRuntime().exec("logcat -f " + logFile);
-                        Toast.makeText(getApplicationContext(), getString(R.string.file_saved_message) + fileTitle, Toast.LENGTH_SHORT).show();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-
+                saveToLog();
             }
         });
 
 
-        RestService mRestService = ServiceGenerator.createService(RestService.class);
+        mRestService = ServiceGenerator.createService(RestService.class);
         Call<List<Posts>> call = mRestService.getPosts();
         call.enqueue(new Callback<List<Posts>>() {
             @Override
@@ -105,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements PageFragment.Grid
                 if (response.code() == 200) {
                     //Toast.makeText(getApplicationContext(), response.body().get(0).getTitle(), Toast.LENGTH_LONG).show();
 
-                    Log.d("TAG", Thread.currentThread().getName().toString());
+                    writeLog(Thread.currentThread().getName().toString());
 
 
                     mPosts.addAll(response.body());
@@ -168,6 +145,37 @@ public class MainActivity extends AppCompatActivity implements PageFragment.Grid
 
     }
 
+    private void saveToLog() {
+        if (isExternalStorageWritable()) {
+
+            File appDirectory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString());
+            File logDirectory = new File(appDirectory + "/SOFTTEQ_LOG");
+
+            String fileTitle = "logcat" + System.currentTimeMillis() + ".txt";
+            File logFile = new File(logDirectory, fileTitle);
+
+
+            // create app folder
+            if (!appDirectory.exists()) {
+                appDirectory.mkdir();
+            }
+
+            // create log folder
+            if (!logDirectory.exists()) {
+                logDirectory.mkdir();
+            }
+
+            // clear the previous logcat and then write the new one to the file
+            try {
+                Process process = Runtime.getRuntime().exec("logcat -c");
+                process = Runtime.getRuntime().exec("logcat -f " + logFile);
+                Toast.makeText(getApplicationContext(), getString(R.string.file_saved_message) + fileTitle, Toast.LENGTH_SHORT).show();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public boolean isExternalStorageWritable() {
         String state = Environment.getExternalStorageState();
         if (Environment.MEDIA_MOUNTED.equals(state)) {
@@ -177,10 +185,31 @@ public class MainActivity extends AppCompatActivity implements PageFragment.Grid
     }
 
     @Override
-    public void onGridItemClicked(Posts post) {
+    public void onGridItemClicked(final Posts post) {
 
-        //Intent sendContactDetails = new Intent(this, ContactActivity.class);
-        Toast.makeText(getApplicationContext(),String.valueOf(post.getId()),Toast.LENGTH_SHORT).show();
+
+        Call<Users> call = mRestService.getUser(String.valueOf(post.getUserId()));
+        call.enqueue(new Callback<Users>() {
+            @Override
+            public void onResponse(Call<Users> call, Response<Users> response) {
+
+                Users user = response.body();
+                UserDTO userToPass = new UserDTO(post, user);
+
+                Intent sendContactDetails = new Intent(MainActivity.this, ContactActivity.class);
+                sendContactDetails.putExtra(SoftteqApplication.USER_DETAILS_PARCELABLE, userToPass);
+                startActivity(sendContactDetails);
+
+            }
+
+            @Override
+            public void onFailure(Call<Users> call, Throwable t) {
+
+            }
+        });
+
+        Toast.makeText(getApplicationContext(), String.valueOf(post.getId()), Toast.LENGTH_SHORT).show();
+
 
     }
 
@@ -225,7 +254,6 @@ public class MainActivity extends AppCompatActivity implements PageFragment.Grid
             Log.d(TAG, message.toString());
         }
     }
-
 
 
 }
