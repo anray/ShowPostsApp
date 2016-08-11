@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ContactActivity extends AppCompatActivity implements View.OnClickListener {
-    private TextView mUserId;
+    
     private TextView mPostId;
     private TextView mFullName;
     private TextView mNickName;
@@ -157,11 +157,11 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
 
         DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(getApplicationContext(), "SoftTeq");
         Database db = helper.getWritableDb();
-        DaoSession daoSession = new DaoMaster(db).newSession();
+        DaoSession sDaoSession = new DaoMaster(db).newSession();
 
         Stetho.initializeWithDefaults(getApplicationContext());
 
-        UserDao mUserDao = daoSession.getUserDao();
+        UserDao mUserDao = sDaoSession.getUserDao();
 
 
         List<UserDTO> userFromParcelable = new ArrayList<>();
