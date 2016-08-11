@@ -2,14 +2,27 @@ package com.softteq.testappsoftteq.activity;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.facebook.stetho.Stetho;
 import com.softteq.testappsoftteq.R;
 import com.softteq.testappsoftteq.SoftteqApplication;
+import com.softteq.testappsoftteq.data.storage.models.DaoMaster;
+import com.softteq.testappsoftteq.data.storage.models.DaoSession;
+import com.softteq.testappsoftteq.data.storage.models.User;
 import com.softteq.testappsoftteq.data.storage.models.UserDTO;
+import com.softteq.testappsoftteq.data.storage.models.UserDao;
+
+import org.greenrobot.greendao.database.Database;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ContactActivity extends AppCompatActivity implements View.OnClickListener {
     private TextView mUserId;
@@ -20,6 +33,9 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
     private TextView mWebSite;
     private TextView mPhone;
     private TextView mCity;
+    private Button mSave;
+
+    private UserDTO mUserInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,24 +50,26 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
         mWebSite = (TextView) findViewById(R.id.web_site_tv);
         mPhone = (TextView) findViewById(R.id.phone_tv);
         mCity = (TextView) findViewById(R.id.city_tv);
+        mSave = (Button) findViewById(R.id.save_to_db_btn);
         mEmail.setOnClickListener(this);
         mWebSite.setOnClickListener(this);
         mPhone.setOnClickListener(this);
         mCity.setOnClickListener(this);
+        mSave.setOnClickListener(this);
 
 
-        UserDTO userInfo = getIntent().getParcelableExtra(SoftteqApplication.USER_DETAILS_PARCELABLE);
+        mUserInfo = getIntent().getParcelableExtra(SoftteqApplication.USER_DETAILS_PARCELABLE);
 
-        getSupportActionBar().setTitle(getString(R.string.toolbar_contact_text) + String.valueOf(userInfo.getUserId()));
+        getSupportActionBar().setTitle(getString(R.string.toolbar_contact_text) + String.valueOf(mUserInfo.getUserId()));
 
         mPostId.setText(String.valueOf(
-                userInfo.getPostId()));
-        mFullName.setText(userInfo.getFullName());
-        mNickName.setText(userInfo.getNickName());
-        mEmail.setText(userInfo.getEmail());
-        mWebSite.setText(userInfo.getWebSite());
-        mPhone.setText(userInfo.getPhone());
-        mCity.setText(userInfo.getCity());
+                mUserInfo.getPostId()));
+        mFullName.setText(mUserInfo.getFullName());
+        mNickName.setText(mUserInfo.getNickName());
+        mEmail.setText(mUserInfo.getEmail());
+        mWebSite.setText(mUserInfo.getWebSite());
+        mPhone.setText(mUserInfo.getPhone());
+        mCity.setText(mUserInfo.getCity());
 
 
     }
@@ -71,6 +89,10 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.city_tv:
 
                 break;
+            case R.id.save_to_db_btn:
+                new DbSaver().execute();
+                break;
+
 
         }
 
@@ -97,5 +119,51 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
 
         Intent openBrowser = new Intent(Intent.ACTION_VIEW, Uri.parse("http://" + link));
         startActivity(Intent.createChooser(openBrowser, getString(R.string.chooser_title_openBrowser)));
+    }
+
+    class DbSaver extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            //tvInfo.setText("Begin");
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            saveUserToDb();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            //tvInfo.setText("End");
+            Toast.makeText(getApplicationContext(), R.string.saved_to_db, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void saveUserToDb() {
+
+        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(getApplicationContext(), "SoftTeq");
+        Database db = helper.getWritableDb();
+        DaoSession daoSession = new DaoMaster(db).newSession();
+
+        Stetho.initializeWithDefaults(getApplicationContext());
+
+        UserDao mUserDao = daoSession.getUserDao();
+
+
+        List<UserDTO> userFromParcelable = new ArrayList<>();
+        userFromParcelable.add(mUserInfo);
+        List<User> userForSave = new ArrayList<>();
+
+
+        for (UserDTO user : userFromParcelable) {
+
+            userForSave.add(new User(user));
+        }
+
+        mUserDao.insertOrReplaceInTx(userForSave);
     }
 }

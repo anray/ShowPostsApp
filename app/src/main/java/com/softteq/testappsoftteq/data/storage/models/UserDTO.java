@@ -9,6 +9,7 @@ import com.softteq.testappsoftteq.network.response.Users;
 /**
  * Created by anray on 11.08.2016.
  */
+
 public class UserDTO implements Parcelable {
 
 
