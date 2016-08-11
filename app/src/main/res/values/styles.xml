@@ -10,4 +10,14 @@
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
+    <style name="LinkText">
+        <item name="android:layout_height">@dimen/link_size</item>
+        <item name="android:gravity">top</item>
+        <item name="android:autoLink">all</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:textSize">@dimen/link_font_size</item>
+    </style>
+
+
+
 </resources>

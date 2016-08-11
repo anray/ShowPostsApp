@@ -60,7 +60,10 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
 
         mUserInfo = getIntent().getParcelableExtra(SoftteqApplication.USER_DETAILS_PARCELABLE);
 
-        getSupportActionBar().setTitle(getString(R.string.toolbar_contact_text) + String.valueOf(mUserInfo.getUserId()));
+        //set User Id in Toolbar
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(getString(R.string.toolbar_contact_text) + String.valueOf(mUserInfo.getUserId()));
+        }
 
         mPostId.setText(String.valueOf(
                 mUserInfo.getPostId()));
@@ -87,7 +90,7 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
                 dial(mPhone.getText().toString());
                 break;
             case R.id.city_tv:
-
+                openMap(mUserInfo.getLatitude(), mUserInfo.getLongitude());
                 break;
             case R.id.save_to_db_btn:
                 new DbSaver().execute();
@@ -106,12 +109,12 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
 
     private void sendEmail(String email) {
 
-        Intent dialIntent = new Intent(Intent.ACTION_SENDTO);
+        Intent sendEmailIntent = new Intent(Intent.ACTION_SENDTO);
         //, Uri.parse("mailto:" + email)); выдает очень много вариантов
-        //dialIntent.setType("message/rfc822"); выдает меньше вариантов, но среди них тоже есть не почтовые клиенты
-        dialIntent.setData(Uri.parse("mailto:"));
-        dialIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{email});
-        startActivity(Intent.createChooser(dialIntent, getString(R.string.chooser_title_sendEmail)));
+        //sendEmailIntent.setType("message/rfc822"); выдает меньше вариантов, но среди них тоже есть не почтовые клиенты
+        sendEmailIntent.setData(Uri.parse("mailto:"));
+        sendEmailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{email});
+        startActivity(Intent.createChooser(sendEmailIntent, getString(R.string.chooser_title_sendEmail)));
 
     }
 
@@ -119,6 +122,13 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
 
         Intent openBrowser = new Intent(Intent.ACTION_VIEW, Uri.parse("http://" + link));
         startActivity(Intent.createChooser(openBrowser, getString(R.string.chooser_title_openBrowser)));
+    }
+
+    private void openMap(String latitude, String longitude) {
+        //b - это bearing=0, чтобы компас указывал на север
+        String uri = "geo:" + latitude + "," + longitude + "?z=6&b=0";
+        Intent openMapIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+        startActivity(Intent.createChooser(openMapIntent, getString(R.string.chooser_title_openMap)));
     }
 
     class DbSaver extends AsyncTask<Void, Void, Void> {

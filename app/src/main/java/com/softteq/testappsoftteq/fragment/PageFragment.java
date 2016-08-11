@@ -1,6 +1,5 @@
 package com.softteq.testappsoftteq.fragment;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -30,23 +29,6 @@ public class PageFragment extends Fragment {
     List<Posts> mPosts;
 
 
-//    public PageFragment(int pageNumber, List<Posts> posts) {
-//        this.pageNumber = pageNumber;
-//
-//        Bundle arguments = new Bundle();
-//        arguments.putInt(ARGUMENT_PAGE_NUMBER, pageNumber);
-//        this.setArguments(arguments);
-//
-//
-//        mPosts = posts;
-//        return pageFragment;
-//
-//    }
-//
-//    public PageFragment() {
-//        super();
-//    }
-
     public static PageFragment newInstance(int page, ArrayList<Posts> posts) {
         PageFragment pageFragment = new PageFragment();
         Bundle arguments = new Bundle();
@@ -55,11 +37,9 @@ public class PageFragment extends Fragment {
         pageFragment.setArguments(arguments);
 
 
-
         //mPosts = posts;
         return pageFragment;
     }
-
 
 
     @Override
@@ -89,9 +69,6 @@ public class PageFragment extends Fragment {
             }
         });
 
-//        TextView tvPage = (TextView) view.findViewById(R.id.tvPage);
-//        tvPage.setText("Page " + pageNumber);
-//        tvPage.setBackgroundColor(backColor);
 
         return view;
     }

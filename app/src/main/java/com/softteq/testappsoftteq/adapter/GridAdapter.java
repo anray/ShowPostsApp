@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.softteq.testappsoftteq.R;
 import com.softteq.testappsoftteq.network.response.Posts;
 
 import java.util.List;
@@ -20,7 +19,6 @@ public class GridAdapter extends ArrayAdapter<Posts> {
 
     private Context mContext;
     private List<Posts> mPosts;
-
 
 
     public GridAdapter(Context context, List<Posts> posts) {
@@ -47,11 +45,10 @@ public class GridAdapter extends ArrayAdapter<Posts> {
 
         Posts post = getItem(position);
 
-        if (convertView == null){
-            convertView = LayoutInflater.from(mContext).inflate(android.R.layout.simple_list_item_2,null);
+        if (convertView == null) {
+            convertView = LayoutInflater.from(mContext).inflate(android.R.layout.simple_list_item_2, null);
 
         }
-
 
 
         ((TextView) convertView.findViewById(android.R.id.text1)).setText(String.valueOf(post.getId()));
@@ -61,7 +58,6 @@ public class GridAdapter extends ArrayAdapter<Posts> {
 
         return convertView;
     }
-
 
 
 }

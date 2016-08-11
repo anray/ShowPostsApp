@@ -1,11 +1,11 @@
 package com.softteq.testappsoftteq.data.storage.models;
 
+import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.NotNull;
 import org.greenrobot.greendao.annotation.Unique;
-import org.greenrobot.greendao.annotation.Generated;
-import org.greenrobot.greendao.DaoException;
 
 /**
  * Created by anray on 11.08.2016.
@@ -31,11 +31,15 @@ public class User {
     private String mLatitude;
     private String mLongitude;
 
-    /** Used for active entity operations. */
+    /**
+     * Used for active entity operations.
+     */
     @Generated(hash = 1507654846)
     private transient UserDao myDao;
 
-    /** Used to resolve relations */
+    /**
+     * Used to resolve relations
+     */
     @Generated(hash = 2040040024)
     private transient DaoSession daoSession;
 
@@ -90,7 +94,9 @@ public class User {
         myDao.delete(this);
     }
 
-    /** called by internal mechanisms, do not call yourself. */
+    /**
+     * called by internal mechanisms, do not call yourself.
+     */
     @Generated(hash = 2059241980)
     public void __setDaoSession(DaoSession daoSession) {
         this.daoSession = daoSession;
@@ -179,8 +185,8 @@ public class User {
 
     @Generated(hash = 13572490)
     public User(Long id, int mUserId, String mFullName, String mNickName,
-            String mEmail, String mWebSite, String mPhone, String mCity,
-            String mLatitude, String mLongitude) {
+                String mEmail, String mWebSite, String mPhone, String mCity,
+                String mLatitude, String mLongitude) {
         this.id = id;
         this.mUserId = mUserId;
         this.mFullName = mFullName;

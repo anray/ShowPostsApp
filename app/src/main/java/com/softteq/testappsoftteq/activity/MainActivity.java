@@ -12,12 +12,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.GridView;
 import android.widget.Toast;
 
 import com.softteq.testappsoftteq.R;
 import com.softteq.testappsoftteq.SoftteqApplication;
-import com.softteq.testappsoftteq.adapter.GridAdapter;
 import com.softteq.testappsoftteq.data.storage.models.UserDTO;
 import com.softteq.testappsoftteq.fragment.PageFragment;
 import com.softteq.testappsoftteq.network.response.Posts;
@@ -37,24 +35,17 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements PageFragment.GridItem {
 
-    private GridAdapter mGridAdapter;
-    private GridView mGridView;
+    private static final String TAG = "MainActivity";
+    private final static int GRID_SIZE = 6;
 
-    private static final String[] mContacts = {"Рыжик", "Барсик", "Мурзик",
-            "Мурка", "Васька", "Полосатик", "Матроскин", "Лизка", "Томосина",
-            "Бегемот", "Чеширский", "Дивуар", "Тигра", "Лаура"};
     private List<Posts> mPosts = new ArrayList<>();
-
     private ViewPager mPager;
     private PagerAdapter mPagerAdapter;
     private CircleIndicator mCircleIndicator;
     private Button mButton;
     private RestService mRestService;
-
-    private static final String TAG = "MainActivity";
-
     private int mPageCount;
-    private final int mGridSize = 6;
+
 
 
     @Override
@@ -80,14 +71,14 @@ public class MainActivity extends AppCompatActivity implements PageFragment.Grid
             @Override
             public void onResponse(Call<List<Posts>> call, Response<List<Posts>> response) {
                 if (response.code() == 200) {
-                    //Toast.makeText(getApplicationContext(), response.body().get(0).getTitle(), Toast.LENGTH_LONG).show();
+
 
                     writeLog(Thread.currentThread().getName().toString());
 
 
                     mPosts.addAll(response.body());
 
-                    mPageCount = (int) Math.ceil((float) mPosts.size() / 6);
+                    mPageCount = (int) Math.ceil((float) mPosts.size() / GRID_SIZE);
 
 //                    ArrayAdapter<Posts> mPostsAdapter = new GridAdapter(getApplicationContext(), mPosts);
 //                    mGridView = (GridView) findViewById(R.id.grid_gv);
@@ -99,24 +90,6 @@ public class MainActivity extends AppCompatActivity implements PageFragment.Grid
                     mPager.setAdapter(mPagerAdapter);
                     mCircleIndicator.setViewPager(mPager);
 
-                    mPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-
-                        @Override
-                        public void onPageSelected(int position) {
-                            Log.d(TAG, "onPageSelected, position = " + position);
-
-
-                        }
-
-                        @Override
-                        public void onPageScrolled(int position, float positionOffset,
-                                                   int positionOffsetPixels) {
-                        }
-
-                        @Override
-                        public void onPageScrollStateChanged(int state) {
-                        }
-                    });
 
                 }
             }
@@ -126,22 +99,6 @@ public class MainActivity extends AppCompatActivity implements PageFragment.Grid
 
             }
         });
-
-
-        //mGridViewAdapter = new GridViewAdapter(getApplicationContext(),android.R.layout.simple_list_item_1);
-
-        //while (mThreadFlag.isAlive()){}
-
-//        Handler handler = new Handler();
-//        handler.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                ArrayAdapter<Posts> mPostsAdapter = new PostsAdapter(getApplicationContext(), mPosts);
-//                mGridView = (GridView) findViewById(R.id.grid_gv);
-//                mGridView.setAdapter(mPostsAdapter);
-//            }
-//        }, 2000);
-
 
     }
 
@@ -172,6 +129,7 @@ public class MainActivity extends AppCompatActivity implements PageFragment.Grid
                 Toast.makeText(getApplicationContext(), getString(R.string.file_saved_message) + fileTitle, Toast.LENGTH_SHORT).show();
             } catch (IOException e) {
                 e.printStackTrace();
+                Toast.makeText(getApplicationContext(), getString(R.string.saving_failed_message), Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -208,7 +166,7 @@ public class MainActivity extends AppCompatActivity implements PageFragment.Grid
             }
         });
 
-        Toast.makeText(getApplicationContext(), String.valueOf(post.getId()), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), String.valueOf(post.getId()), Toast.LENGTH_SHORT).show();
 
 
     }
@@ -224,10 +182,10 @@ public class MainActivity extends AppCompatActivity implements PageFragment.Grid
         public Fragment getItem(int position) {
             ArrayList<Posts> postsChunk;
 
-            int startIndex = mGridSize * position;
+            int startIndex = GRID_SIZE * position;
 
-            //need this verification because +mGridSize may outbound the size of List
-            int endIndex = Math.min(mGridSize * position + mGridSize, mPosts.size());
+            //need this verification because +GRID_SIZE may outbound the size of List
+            int endIndex = Math.min(GRID_SIZE * position + GRID_SIZE, mPosts.size());
 
             writeLog("position: " + position);
             writeLog("mPosts.size(): " + mPosts.size());
@@ -241,16 +199,14 @@ public class MainActivity extends AppCompatActivity implements PageFragment.Grid
 
         @Override
         public int getCount() {
-            //writeLog(mPageCount);
-
-
+            writeLog(mPageCount);
             return mPageCount;
         }
 
     }
 
     public static void writeLog(Object message) {
-        if (true) {
+        if (false) {
             Log.d(TAG, message.toString());
         }
     }

@@ -37,30 +37,28 @@
     </FrameLayout>
 
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/pager"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2"
-        >
 
-        <!--<GridView-->
-        <!--android:id="@+id/grid_gv"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="0dp"-->
-        <!--android:layout_weight="2"-->
-        <!--android:numColumns="3"-->
-        <!--android:stretchMode="columnWidth"-->
-        <!--/>-->
+        <android.support.v4.view.ViewPager
+            android:id="@+id/pager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
 
 
-    </android.support.v4.view.ViewPager>
+            >
 
 
-    <me.relex.circleindicator.CircleIndicator
-        android:id="@+id/indicator"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"/>
+        </android.support.v4.view.ViewPager>
+
+
+        <me.relex.circleindicator.CircleIndicator
+            android:layout_alignBottom="@+id/pager"
+            android:id="@+id/indicator"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/padding_for_indicator"
+
+            />
+
 
 
 </LinearLayout>
