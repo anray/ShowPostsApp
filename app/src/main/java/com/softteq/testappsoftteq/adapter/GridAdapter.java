@@ -17,13 +17,11 @@ import java.util.List;
  */
 public class GridAdapter extends ArrayAdapter<Posts> {
 
-    //private Posts[] mPosts;
-    private static final String[] mContacts = { "Рыжик", "Барсик", "Мурзик",
-            "Мурка", "Васька", "Полосатик", "Матроскин", "Лизка", "Томосина",
-            "Бегемот", "Чеширский", "Дивуар", "Тигра", "Лаура" };
 
     private Context mContext;
     private List<Posts> mPosts;
+
+
 
     public GridAdapter(Context context, List<Posts> posts) {
         super(context, android.R.layout.simple_list_item_2, posts);

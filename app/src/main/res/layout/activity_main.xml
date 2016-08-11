@@ -24,14 +24,14 @@
             android:src="@drawable/main_picture"
             />
 
-        <ImageView
-            android:layout_width="50dp"
+        <Button
+            android:id="@+id/save_log_btn"
+            android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:layout_gravity="top|right"
             android:layout_marginRight="8dp"
             android:layout_marginTop="8dp"
-            android:background="@color/colorAccent"
-            android:src="@drawable/content_save"
+            android:text="@string/save_log"
             />
 
     </FrameLayout>

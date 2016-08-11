@@ -1,6 +1,8 @@
 package com.softteq.testappsoftteq.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -8,7 +10,10 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import com.softteq.testappsoftteq.R;
 import com.softteq.testappsoftteq.adapter.GridAdapter;
@@ -17,14 +22,17 @@ import com.softteq.testappsoftteq.network.response.Posts;
 import com.softteq.testappsoftteq.network.restmodels.RestService;
 import com.softteq.testappsoftteq.network.restmodels.ServiceGenerator;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.relex.circleindicator.CircleIndicator;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements PageFragment.GridItem {
 
     private GridAdapter mGridAdapter;
     private GridView mGridView;
@@ -34,8 +42,10 @@ public class MainActivity extends AppCompatActivity {
             "Бегемот", "Чеширский", "Дивуар", "Тигра", "Лаура"};
     private List<Posts> mPosts = new ArrayList<>();
 
-    ViewPager pager;
-    PagerAdapter pagerAdapter;
+    private ViewPager mPager;
+    private PagerAdapter mPagerAdapter;
+    private CircleIndicator mCircleIndicator;
+    private Button mButton;
 
     private static final String TAG = "MainActivity";
 
@@ -48,18 +58,43 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//
-//       Thread t = new Thread(new Runnable() {
-//            public void run() {
-//
-//                try {
-//                    mPosts =  call.execute().body();
-//                } catch (Exception e){
-//
-//                }
-//            }
-//        });
-//        t.start();
+        mCircleIndicator = (CircleIndicator) findViewById(R.id.indicator);
+        mButton = (Button) findViewById(R.id.save_log_btn);
+        mButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isExternalStorageWritable()) {
+
+                    File appDirectory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString());
+                    File logDirectory = new File(appDirectory + "/SOFTTEQ_LOG");
+
+                    String fileTitle = "logcat" + System.currentTimeMillis() + ".txt";
+                    File logFile = new File(logDirectory, fileTitle);
+
+
+                    // create app folder
+                    if (!appDirectory.exists()) {
+                        appDirectory.mkdir();
+                    }
+
+                    // create log folder
+                    if (!logDirectory.exists()) {
+                        logDirectory.mkdir();
+                    }
+
+                    // clear the previous logcat and then write the new one to the file
+                    try {
+                        Process process = Runtime.getRuntime().exec("logcat -c");
+                        process = Runtime.getRuntime().exec("logcat -f " + logFile);
+                        Toast.makeText(getApplicationContext(), getString(R.string.file_saved_message) + fileTitle, Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+
+            }
+        });
 
 
         RestService mRestService = ServiceGenerator.createService(RestService.class);
@@ -82,11 +117,12 @@ public class MainActivity extends AppCompatActivity {
 //
 //                    mGridView.setAdapter(mPostsAdapter);
 
-                    pager = (ViewPager) findViewById(R.id.pager);
-                    pagerAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager());
-                    pager.setAdapter(pagerAdapter);
+                    mPager = (ViewPager) findViewById(R.id.pager);
+                    mPagerAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager());
+                    mPager.setAdapter(mPagerAdapter);
+                    mCircleIndicator.setViewPager(mPager);
 
-                    pager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                    mPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
                         @Override
                         public void onPageSelected(int position) {
@@ -132,6 +168,23 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public boolean isExternalStorageWritable() {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onGridItemClicked(Posts post) {
+
+        //Intent sendContactDetails = new Intent(this, ContactActivity.class);
+        Toast.makeText(getApplicationContext(),String.valueOf(post.getId()),Toast.LENGTH_SHORT).show();
+
+    }
+
+
     private class MyFragmentPagerAdapter extends FragmentPagerAdapter {
 
         public MyFragmentPagerAdapter(FragmentManager fm) {
@@ -172,6 +225,8 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, message.toString());
         }
     }
+
+
 
 }
 

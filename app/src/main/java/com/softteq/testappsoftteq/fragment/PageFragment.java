@@ -1,10 +1,12 @@
 package com.softteq.testappsoftteq.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 
@@ -22,6 +24,7 @@ public class PageFragment extends Fragment {
 
     static final String ARGUMENT_PAGE_NUMBER = "arg_page_number";
     static final String ARGUMENT_DATA = "arg_data";
+    private GridItem mGridItemListener;
 
     int pageNumber;
     List<Posts> mPosts;
@@ -57,6 +60,8 @@ public class PageFragment extends Fragment {
         return pageFragment;
     }
 
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,12 +80,24 @@ public class PageFragment extends Fragment {
         GridView mGridView = (GridView) view.findViewById(R.id.grid_gv);
 
         mGridView.setAdapter(mPostsAdapter);
+        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                mGridItemListener = (GridItem) getActivity();
+                mGridItemListener.onGridItemClicked(mPosts.get(position));
+
+            }
+        });
 
 //        TextView tvPage = (TextView) view.findViewById(R.id.tvPage);
 //        tvPage.setText("Page " + pageNumber);
 //        tvPage.setBackgroundColor(backColor);
 
         return view;
+    }
+
+    public interface GridItem {
+        public void onGridItemClicked(Posts post);
     }
 
 }
