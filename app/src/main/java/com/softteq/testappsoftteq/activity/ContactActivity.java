@@ -155,13 +155,9 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
 
     private void saveUserToDb() {
 
-        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(getApplicationContext(), "SoftTeq");
-        Database db = helper.getWritableDb();
-        DaoSession sDaoSession = new DaoMaster(db).newSession();
 
-        Stetho.initializeWithDefaults(getApplicationContext());
 
-        UserDao mUserDao = sDaoSession.getUserDao();
+        UserDao mUserDao = SoftteqApplication.getDaoSession().getUserDao();
 
 
         List<UserDTO> userFromParcelable = new ArrayList<>();
